@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dice — 1 to 56</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: sans-serif; background: #f5f5f3; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    .wrap { background: #fff; border-radius: 16px; border: 1px solid #e0e0e0; padding: 2rem 1.5rem; max-width: 420px; width: 100%; }
+    .title { font-size: 20px; font-weight: 500; color: #1a1a1a; margin-bottom: 1.5rem; text-align: center; }
+    .dice-display { background: #f5f5f3; border: 1px solid #e0e0e0; border-radius: 14px; padding: 2rem 1rem; text-align: center; margin-bottom: 1.5rem; cursor: pointer; transition: background 0.15s; user-select: none; }
+    .dice-display:hover { background: #ebebea; }
+    .dice-display:active { transform: scale(0.98); }
+    .dice-num { font-size: 80px; font-weight: 500; color: #1a1a1a; line-height: 1; }
+    .dice-hint { font-size: 13px; color: #888; margin-top: 0.5rem; }
+    .history-label { font-size: 13px; color: #888; margin-bottom: 8px; }
+    .history-box { display: flex; flex-wrap: wrap; gap: 8px; min-height: 48px; margin-bottom: 1.5rem; align-items: center; }
+    .hist-chip { background: #f5f5f3; border: 1px solid #e0e0e0; border-radius: 8px; padding: 6px 14px; font-size: 14px; font-weight: 500; color: #1a1a1a; }
+    .empty-msg { font-size: 13px; color: #aaa; }
+    .btns { display: flex; gap: 12px; }
+    .btn { flex: 1; padding: 11px; border: 1px solid #ccc; border-radius: 10px; background: transparent; font-size: 15px; color: #1a1a1a; cursor: pointer; transition: background 0.1s, transform 0.1s; }
+    .btn:hover { background: #f5f5f3; }
+    .btn:active { transform: scale(0.97); }
+    .btn-done { font-weight: 500; border-color: #aaa; }
+    .done-banner { background: #eaf3de; border: 1px solid #c0dd97; border-radius: 14px; padding: 1.25rem; margin-bottom: 1.5rem; }
+    .done-banner-title { font-size: 13px; color: #3b6d11; margin-bottom: 6px; }
+    .done-banner-num { font-size: 34px; font-weight: 500; color: #27500a; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="title">🎲 Dice — 1 to 56</p>
+
+    <div class="dice-display" onclick="rollDice()">
+      <div class="dice-num" id="diceNum">?</div>
+      <div class="dice-hint">Tap to roll</div>
+    </div>
+
+    <div id="doneBanner" style="display:none;" class="done-banner">
+      <div class="done-banner-title">Selected number</div>
+      <div class="done-banner-num" id="doneBannerNum">—</div>
+    </div>
+
+    <div class="history-label">History</div>
+    <div class="history-box" id="histBox">
+      <span class="empty-msg">No rolls yet</span>
+    </div>
+
+    <div class="btns">
+      <button class="btn" onclick="resetCurrent()">↺ Reset</button>
+      <button class="btn btn-done" onclick="confirmDone()">✓ Done</button>
+    </div>
+  </div>
+
+  <script>
+    let history = [];
+    let current = null;
+
+    function rollDice() {
+      current = Math.floor(Math.random() * 56) + 1;
+      document.getElementById('diceNum').textContent = current;
+      document.getElementById('doneBanner').style.display = 'none';
+      history.push(current);
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const box = document.getElementById('histBox');
+      if (history.length === 0) {
+        box.innerHTML = '<span class="empty-msg">No rolls yet</span>';
+        return;
+      }
+      box.innerHTML = history.map(n => `<span class="hist-chip">${n}</span>`).join('');
+    }
+
+    function resetCurrent() {
+      if (current !== null) {
+        history = history.filter(n => n !== current);
+      }
+      current = null;
+      document.getElementById('diceNum').textContent = '?';
+      document.getElementById('doneBanner').style.display = 'none';
+      renderHistory();
+    }
+
+    function confirmDone() {
+      if (current === null) return;
+      document.getElementById('doneBannerNum').textContent = current + ' — confirmed!';
+      document.getElementById('doneBanner').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
